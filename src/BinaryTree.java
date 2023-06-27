@@ -9,6 +9,10 @@ import java.util.Iterator;
  */
 public interface BinaryTree<T> extends Iterable<T> {
 
+//    int height(TreeNode<T> root);
+    void deleteNode(T val);
+
+
     /**
      * Интерфейс для описания узла двоичного дерева
      *
@@ -21,6 +25,7 @@ public interface BinaryTree<T> extends Iterable<T> {
          */
         T getValue();
 
+
         /**
          * @return Левое поддерево
          */
@@ -28,12 +33,16 @@ public interface BinaryTree<T> extends Iterable<T> {
             return null;
         }
 
+        default void setLeft(TreeNode<T> node) {}
+
         /**
          * @return Правое поддерево
          */
         default TreeNode<T> getRight() {
             return null;
         }
+
+        default void setRight(TreeNode<T> node) {}
 
         /**
          * @return Цвет узла (для рисования и не только)
@@ -66,6 +75,7 @@ public interface BinaryTree<T> extends Iterable<T> {
      * @return Корень (вершина) дерева
      */
     TreeNode<T> getRoot();
+
 
 
     /**

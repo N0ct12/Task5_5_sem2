@@ -26,12 +26,20 @@ public class SimpleBinaryTree<T> implements BinaryTree<T>{
         }
 
 
-        public BinaryTree.TreeNode<T> getLeft() {
+        public SimpleTreeNode getLeft() {
             return left;
         }
 
-        public TreeNode<T> getRight() {
+        public void setLeft(SimpleTreeNode node) {
+            this.left = node;
+        }
+
+        public SimpleTreeNode getRight() {
             return right;
+        }
+
+        public void setRight(SimpleTreeNode node) {
+            this.right = node;
         }
     }
 
@@ -54,7 +62,7 @@ public class SimpleBinaryTree<T> implements BinaryTree<T>{
     }
 
     @Override
-    public TreeNode<T> getRoot() {
+    public SimpleTreeNode getRoot() {
         return root;
     }
 
@@ -62,6 +70,75 @@ public class SimpleBinaryTree<T> implements BinaryTree<T>{
         root = null;
     }
 
+    private static class IndexWrapper {
+
+        public int index = 0;
+    }
+
+    public static <T> int height(BinaryTree.TreeNode<T> root) {
+        if (root == null) {
+            return 0;
+        }
+        return 1 + Math.max(height(root.getLeft()), height(root.getRight()));
+    }
+
+    public SimpleTreeNode findLeafByValue(T value) { // поиск узла по значению
+        SimpleTreeNode currentNode = root; // начинаем поиск с корневого узла
+        while (currentNode.getValue() != value && currentNode.getLeft()!=null && currentNode.getRight()!=null) { // поиск покуда не будет найден элемент или не будут перебраны все
+            if ((int)value < (int)currentNode.getValue()) { // движение влево?
+                currentNode = currentNode.getLeft();
+            } else { //движение вправо
+                currentNode = currentNode.getRight();
+            }
+            if (currentNode == null) { // если потомка нет,
+                return null; // возвращаем null
+            }
+        }
+        System.out.println(currentNode.getValue());
+        return currentNode; // возвращаем найденный элемент
+    }
+
+//    public void deleteNode(BinaryTree.TreeNode<T> root)
+//    {
+//        BinaryTree.TreeNode<T> parent = getParent(root.getValue());
+//        if (parent.getLeft().getValue() == root.getValue()){
+//            parent.setLeft(null);
+//        } else {
+//            parent.setRight(null);
+//        }
+//    }
+
+
+    @Override
+    public void deleteNode(T val)
+    {
+        SimpleTreeNode root = findLeafByValue(val);
+        SimpleTreeNode parent = getParent(root);
+        if (parent.getLeft() == root){
+            parent.setLeft(null);
+        } else parent.setRight(null);
+    }
+
+    public SimpleTreeNode getParent(SimpleTreeNode p){
+        return parentHelper(root,p);
+    }
+    private SimpleTreeNode parentHelper(SimpleTreeNode currentRoot, SimpleTreeNode p) {
+        if (p==root || currentRoot==null){
+            return null;
+        }
+        else{
+            if(currentRoot.left==p || currentRoot.right==p)
+                return currentRoot;
+            else {
+                if (Integer.parseInt(currentRoot.value.toString()) < Integer.parseInt(p.value.toString())) {
+                    return parentHelper(currentRoot.right,p);
+                }
+                else {
+                    return parentHelper(currentRoot.left,p);
+                }
+            }
+        }
+    }
     private T fromStr(String s) throws Exception {
         s = s.trim();
         if (s.length() > 0 && s.charAt(0) == '"') {
@@ -74,10 +151,6 @@ public class SimpleBinaryTree<T> implements BinaryTree<T>{
             throw new Exception("Не определена функция конвертации строки в T");
         }
         return fromStrFunc.apply(s);
-    }
-
-    private static class IndexWrapper {
-        public int index = 0;
     }
 
     private void skipSpaces(String bracketStr, IndexWrapper iw) {

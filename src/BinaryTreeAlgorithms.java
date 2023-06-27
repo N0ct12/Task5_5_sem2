@@ -24,10 +24,10 @@ public class BinaryTreeAlgorithms {
      * @param treeNode Узел поддерева, которое требуется "обойти"
      * @param visitor Посетитель
      */
-    public static <T> void preOrderVisit(MyBinTree<T>.MyTreeNode treeNode, Visitor<T> visitor) {
+    public static <T> void preOrderVisit(BinaryTree.TreeNode<T> treeNode, Visitor<T> visitor) {
         // данный класс нужен только для того, чтобы "спрятать" его метод (c 3-мя параметрами)
         class Inner {
-            void preOrderVisit(MyBinTree<T>.MyTreeNode node, Visitor<T> visitor, int level) {
+            void preOrderVisit(BinaryTree.TreeNode<T> node, Visitor<T> visitor, int level) {
                 if (node == null) {
                     return;
                 }
@@ -77,6 +77,17 @@ public class BinaryTreeAlgorithms {
 
 
 
+    public static <T> void deleteByPost(BinaryTree.TreeNode<T> node, int lvl, BinaryTree<T> tree) {
+        if (node == null) {
+            return;
+        }
+        if (lvl!=(SimpleBinaryTree.height(tree.getRoot())-1) && node.getLeft()==null && node.getRight()==null){
+            tree.deleteNode(node.getValue());
+        }
+        deleteByPost(node.getLeft(),  lvl + 1,  tree);
+        deleteByPost(node.getRight(),  lvl + 1 , tree);
+        System.out.println(node.getValue()+" Уровень: "+lvl);
+    }
     /**
      * Обход поддерева с вершиной в данном узле
      * "посетителем" в симметричном/поперечном/центрированном/LNR порядке - рекурсивная реализация
@@ -161,27 +172,6 @@ public class BinaryTreeAlgorithms {
         }
         // класс приходится создавать, т.к. статические методы в таких класс не поддерживаются
         new Inner().postOrderVisit(treeNode, visitor, 0);
-    }
-
-    public static <T> Stack<MyBinTree<T>.MyTreeNode> postOrderDelVisit(MyBinTree<T>.MyTreeNode treeNode, Visitor<T> visitor) {
-        int[] max = {-1};
-        Stack<MyBinTree<T>.MyTreeNode> nodes = new Stack<>();
-        // данный класс нужен только для того, чтобы "спрятать" его метод (c 3-мя параметрами)
-        class Inner {
-            void postOrderVisit(MyBinTree<T>.MyTreeNode node, Visitor<T> visitor, int level) {
-                if (node == null) {
-                    return;
-                }
-                postOrderVisit(node.getLeft(), visitor, level + 1);
-                postOrderVisit(node.getRight(), visitor, level + 1);
-                visitor.visit(node.getValue(), level);
-                if (max[0] < level) max[0] = level;
-                if (max[0] > level) nodes.push(node);
-            }
-        }
-        // класс приходится создавать, т.к. статические методы в таких класс не поддерживаются
-        new Inner().postOrderVisit(treeNode, visitor, 0);
-        return nodes;
     }
 
     /**
